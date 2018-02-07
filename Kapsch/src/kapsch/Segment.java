@@ -48,5 +48,13 @@ public class Segment {
 		sensorVector.remove(sensor);
 	}
 	
+	public int getSensorsSize() {
+		return sensorVector.size();
+	}
+	
+	public Sensor getSensor(int position) {
+		return sensorVector.get(position);
+	}
+	
 }
 

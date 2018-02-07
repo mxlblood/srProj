@@ -33,23 +33,13 @@ public class Sensor {
 		return temp;
 	}
 	
-	public double calculateDensity(double flow, double Speed) {
-		density = flow/Speed;
-		return density;
-	}
-	
 	public double getDensity()
 	{
 		return this.density;
 	}
 	
-	private void setDensity(double theDensity) {
+	public void setDensity(double theDensity) {
 		this.density = theDensity;
-	}
-	
-	public double calculateFlow(int Volume) {
-		flow= Volume/60;
-		return flow;
 	}
 	
 	public double getFlow()
@@ -57,11 +47,11 @@ public class Sensor {
 		return this.flow;
 	}
 	
-	private void setFlow(double theFlow) {
+	public void setFlow(double theFlow) {
 		this.flow = theFlow;
 	}
 	
-	public Sensor(int theSensorID, int theLaneID, int theVolume, double theSpeed, float theOccupancy, Date theStartTime, Date theEndTime, int theSmallCount, int theMediumCount, int theLargeCount, double theFlow, double theDensity) {
+	public Sensor(int theSensorID, int theLaneID, int theVolume, double theSpeed, float theOccupancy, Date theStartTime, Date theEndTime, int theSmallCount, int theMediumCount, int theLargeCount) {
 		this.setSensorID(theSensorID);
 		this.setLane(theLaneID);
 		this.setVolume(theVolume);
@@ -72,10 +62,7 @@ public class Sensor {
 		this.setSmallCount(theSmallCount);
 		this.setMediumCount(theMediumCount);
 		this.setLargeCount(theLargeCount);
-		this.setFlow(theFlow);
-		this.setDensity(theDensity);
 	}
-	
 	
 	public int getLargeCount()
 	{

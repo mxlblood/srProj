@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.Vector;
+
 import javax.xml.soap.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,8 +28,11 @@ public class HistoricData {
 	private static String facilityID;
 	private static String segmentID;
 	
+	private static int interval;
+	
 	//added
-	//private static String sensorID;
+	private static String sensorID;
+	private static Vector<String> sensorIDList= new Vector<String>();
 	
 	public static void main(String[] args) {
 		
@@ -66,8 +71,14 @@ public class HistoricData {
 		segmentID = sc.next();
 		
 		//added
-		//System.out.println("Enter a sensor ID: ");
-		//sensorID = sc.next();
+		while(true){
+			System.out.println("Enter a sensor ID or enter 'x' to escape: ");
+			sensorID = sc.next();
+			if(sensorID.equals("x"))
+				break;
+			else
+				sensorIDList.add(sensorID);
+		}
 		
 		sc.close();
 		fullStartTime=(date+"T"+startTime);
@@ -80,8 +91,42 @@ public class HistoricData {
 		System.out.println(longSegment);
 		
 		GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
+		Vector<Sensor> testSet = getTestSet();
 		
-		System.out.println("\n"+longSegment);
+		for(int i=0; i<testSet.size(); i++) {
+			Sensor current = testSet.get(i);
+			double flow = calculateFlow(current.getVolume());
+			double density = calculateDensity(flow, current.getSpeed());
+			current.setFlow(flow);
+			current.setDensity(density);
+		}
+		
+		//System.out.println("\n"+longSegment);
+		System.out.println("\n"+testSet);
+	}
+	
+	public static Vector<Sensor> getTestSet() {
+		Sensor sensor;
+		Vector<Sensor> testSet= new Vector<Sensor>();
+		for(int i=0;i<longSegment.getSensorsSize(); i++) {
+			sensor = longSegment.getSensor(i);
+			String currentSensor = Integer.toString(sensor.getSensorID());
+			if (sensorIDList.contains(currentSensor)) {
+				testSet.add(sensor);
+			}	
+		}
+		//System.out.println(testSet);
+		return testSet;
+	}
+
+	public static double calculateFlow(int volume) {
+		double flow= (double) (3600*volume)/240;
+		return flow;
+	}
+	
+	public static double calculateDensity(double flow, double speed) {
+		double density = flow/speed;
+		return density;
 	}
 
 	public static boolean isThisDateValid(String dateToValidate, String dateFormat){
@@ -121,9 +166,6 @@ public class HistoricData {
             SOAPElement tollingSegmentElement = tollingSegmentDataElement.addChildElement("TollingSegmentID");
             SOAPElement facilityElement = tollingSegmentElement.addChildElement("FacilityID");
             SOAPElement segmentElement = tollingSegmentElement.addChildElement("SegmentID");
-            
-            //added sensorID
-            //SOAPElement sensorElement = tollingSegmentElement.addChildElement("SensorID");
             SOAPElement startTimeElement = tollingSegmentDataElement.addChildElement("StartTime");
             SOAPElement endTimeElement = tollingSegmentDataElement.addChildElement("EndTime");
             //facilityElement.addTextNode("80");
@@ -133,9 +175,6 @@ public class HistoricData {
             //String stringFacilityID= String.valueOf(facilityID);
             facilityElement.addTextNode(facilityID);
             //String stringSegmentID= String.valueOf(segmentID);
-            
-            //added
-            //sensorElement.addTextNode(sensorID);
             segmentElement.addTextNode(segmentID);
             startTimeElement.addTextNode(fullStartTime);
             endTimeElement.addTextNode(fullEndTime);
@@ -173,20 +212,6 @@ public class HistoricData {
 		//when parsing, search for facility and segmentID to create sensor data and put in segment
 	}
 	
-	private double flow;
-	public double calculateFlow(int Volume) {
-		flow= (3600*Volume)/240*60;
-		return flow;
-	}
-	
-	private double density;
-	public double calculateDensity(double flow, double Speed) {
-		density = flow/Speed;
-		return density;
-	}
-	
-	private double interval;
-	private double delta;
 	public static void readXML() {
 		try {
 			
@@ -265,14 +290,9 @@ public class HistoricData {
 					String largeResult= eElement.getElementsByTagName("LargeCount").item(0).getTextContent();
 					int largeCount = Integer.parseInt(largeResult);
 					
-					//double interval = 
-					//double delta = interval;
-					//double flow = (3600*volume)/delta*60;
-					double flow = (3600*volume)/60;
-					double density = flow/speed;
-					
-					Sensor sensor = new Sensor(sensorID, laneID, volume, speed, occupancy, startTime, endTime, smallCount, mediumCount, largeCount, flow, density);
+					Sensor sensor = new Sensor(sensorID, laneID, volume, speed, occupancy, startTime, endTime, smallCount, mediumCount, largeCount);
 					longSegment.addSensor(sensor);	
+					//search through list for sensorIDs
 					
 				}
 				
