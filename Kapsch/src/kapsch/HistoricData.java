@@ -1,11 +1,14 @@
 package kapsch;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Scanner;
+import java.util.Properties;
 import java.util.Vector;
-
 import javax.xml.soap.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,7 +29,9 @@ public class HistoricData {
 	private static String fullStartTime;
 	private static String fullEndTime;
 	private static String facilityID;
+	private static String facilityDescription;
 	private static String segmentID;
+	private static String segmentDescription;
 	
 	private static int interval;
 	
@@ -36,59 +41,133 @@ public class HistoricData {
 	
 	public static void main(String[] args) {
 		
-		Scanner sc = new Scanner(System.in);
+		File configFile = new File("config.properties");
+		try {
+		    FileReader reader = new FileReader(configFile);
+		    Properties props = new Properties();
+		    props.load(reader);
 
-		System.out.println("Enter a start date in format 'yyyy-MM-dd': ");
-		date = sc.next();
-		while(isThisDateValid(date, "yyyy-MM-dd")==false) {
-			System.out.println("Error in date formatting.");
-			System.out.println("Enter a date in format 'yyyy-MM-dd': ");
-			date = sc.next();
+		    facilityID = props.getProperty("facilityID");
+		    facilityDescription = props.getProperty("facilityDescription");
+		    segmentID = props.getProperty("segmentID");
+		    segmentDescription = props.getProperty("segmentDescription");
+		    String sensorIDs = props.getProperty("sensorIDs");
+		    String[] convertedSensorIDList = sensorIDs.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+		    for (int i = 0; i < convertedSensorIDList.length; i++) {
+		        try {
+		        		sensorID = convertedSensorIDList[i];
+		        		sensorIDList.add(sensorID);
+		        } catch (NumberFormatException nfe) {
+		        };
+		    }
+		    
+		    String startDate = props.getProperty("startDate");
+		    if(isThisDateValid(startDate, "yyyy-MM-dd")==false) {
+	    			System.out.println("Error in date formatting");
+		    }
+		    String startTimeResult = props.getProperty("startTime");
+		    if(isThisDateValid(startTimeResult, "HH:mm:ss")==false) {
+		    		System.out.println("Error in start time formatting");
+		    }
+		    
+		    Calendar endTime = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			endTime.setTime(sdf.parse(startTimeResult));
+		    
+		    int interval = Integer.parseInt(props.getProperty("interval"));
+		    if(interval == 1){
+		    		endTime.add(Calendar.MINUTE, 4);
+		    }
+		    else if(interval == 2) {
+		    		endTime.add(Calendar.MINUTE, 8);
+		    }
+		    else if(interval == 3) {
+		    		endTime.add(Calendar.MINUTE, 12);
+		    }
+		    else if(interval == 4) {
+		    		endTime.add(Calendar.MINUTE, 16);
+		    }
+		    else {
+		    		System.out.println("Error in interval length");
+		    }
+		    
+		    fullStartTime=(startDate+"T"+startTimeResult);
+		    String endFormattedTime = sdf.format(endTime.getTime());
+		    fullEndTime=(startDate+"T"+endFormattedTime);
+		    
+		    System.out.print("Facility ID: " + facilityID+"\n");
+		    System.out.print("Segment ID: " + segmentID+"\n");
+		    System.out.print("Sensors: " + sensorIDList+"\n");
+		    System.out.print("Start Time: " + fullStartTime +"\n");
+		    System.out.print("End Time: " + fullEndTime +"\n");
+		    System.out.print("Interval: " + interval+"\n");
+		    reader.close();
+		} catch (FileNotFoundException ex) {
+		    // file does not exist
+		} catch (IOException ex) {
+		    // I/O error
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		System.out.println("Enter a start time in format 'HH:mm:ss': ");
-		startTime = sc.next();
-		while(isThisDateValid(startTime, "HH:mm:ss")==false) {
-			System.out.println("Error in start time formatting.");
-			System.out.println("Enter a start time in format 'HH:mm:ss': ");
-			startTime = sc.next();
-		}
+//		Scanner sc = new Scanner(System.in);
+//
+//		System.out.println("Enter a start date in format 'yyyy-MM-dd': ");
+//		date = sc.next();
+//		while(isThisDateValid(date, "yyyy-MM-dd")==false) {
+//			System.out.println("Error in date formatting.");
+//			System.out.println("Enter a date in format 'yyyy-MM-dd': ");
+//			date = sc.next();
+//		}
+//		
+//		System.out.println("Enter a start time in format 'HH:mm:ss': ");
+//		startTime = sc.next();
+//		while(isThisDateValid(startTime, "HH:mm:ss")==false) {
+//			System.out.println("Error in start time formatting.");
+//			System.out.println("Enter a start time in format 'HH:mm:ss': ");
+//			startTime = sc.next();
+//		}
+//		
+//		System.out.println("Enter an end time in format 'HH:mm:ss': ");
+//		endTime = sc.next();
+//		while(isThisDateValid(endTime, "HH:mm:ss")==false) {
+//			System.out.println("Error in end time formatting.");
+//			System.out.println("Enter an end time in format 'HH:mm:ss': ");
+//			endTime = sc.next();
+//		}
+//		
+//		//facilityID= 80
+//		System.out.println("Enter a facility ID: ");
+//		facilityID = sc.next();
+//		
+//		//segmentID=6
+//		System.out.println("Enter a segment ID: ");
+//		segmentID = sc.next();
+//		
+//		//added
+//		while(true){
+//			System.out.println("Enter a sensor ID or enter 'x' to escape: ");
+//			sensorID = sc.next();
+//			if(sensorID.equals("x"))
+//				break;
+//			else
+//				sensorIDList.add(sensorID);
+//		}
+//		
+//		sc.close();
+//		fullStartTime=(date+"T"+startTime);
+//		fullEndTime=(date+"T"+endTime);
 		
-		System.out.println("Enter an end time in format 'HH:mm:ss': ");
-		endTime = sc.next();
-		while(isThisDateValid(endTime, "HH:mm:ss")==false) {
-			System.out.println("Error in end time formatting.");
-			System.out.println("Enter an end time in format 'HH:mm:ss': ");
-			endTime = sc.next();
-		}
+		//converting strings to ints to use in constructors
+		int facilityIDint = Integer.parseInt(facilityID);
+		int segmentIDint = Integer.parseInt(segmentID);
 		
-		//facilityID= 80
-		System.out.println("Enter a facility ID: ");
-		facilityID = sc.next();
-		
-		//segmentID=6
-		System.out.println("Enter a segment ID: ");
-		segmentID = sc.next();
-		
-		//added
-		while(true){
-			System.out.println("Enter a sensor ID or enter 'x' to escape: ");
-			sensorID = sc.next();
-			if(sensorID.equals("x"))
-				break;
-			else
-				sensorIDList.add(sensorID);
-		}
-		
-		sc.close();
-		fullStartTime=(date+"T"+startTime);
-		fullEndTime=(date+"T"+endTime);
-		
-		north = new Facility(80,"Northbound");
-		longSegment = new Segment(6,"LongSegment");
+		north = new Facility(facilityIDint, facilityDescription);
+		longSegment = new Segment(segmentIDint, segmentDescription);
 		north.addSegment(longSegment);
 		
-		System.out.println(longSegment);
+		System.out.println("\n"+longSegment);
 		
 		GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
 		Vector<Sensor> testSet = getTestSet();
@@ -101,7 +180,7 @@ public class HistoricData {
 			current.setDensity(density);
 		}
 		
-		//System.out.println("\n"+longSegment);
+		System.out.println("\n"+longSegment);
 		System.out.println("\n"+testSet);
 	}
 	
