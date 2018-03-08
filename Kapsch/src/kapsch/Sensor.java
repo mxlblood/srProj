@@ -3,7 +3,7 @@ package kapsch;
 import java.util.Date;
 
 public class Sensor {
-	private int sensorID;
+	public int sensorID;
 	private int laneID;
 	private int volume;
 	private double speed;

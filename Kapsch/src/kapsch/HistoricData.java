@@ -1,12 +1,18 @@
 package kapsch;
 
+import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import javax.xml.soap.*;
@@ -19,6 +25,9 @@ import org.w3c.dom.NodeList;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import java.io.*;
+import org.json.*;
 
 public class HistoricData {
 	private static Facility north;
@@ -65,34 +74,37 @@ public class HistoricData {
 		    if(isThisDateValid(startDate, "yyyy-MM-dd")==false) {
 	    			System.out.println("Error in date formatting");
 		    }
+		    
 		    String startTimeResult = props.getProperty("startTime");
 		    if(isThisDateValid(startTimeResult, "HH:mm:ss")==false) {
 		    		System.out.println("Error in start time formatting");
 		    }
 		    
-		    Calendar endTime = Calendar.getInstance();
+		    Calendar theEndTime = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			endTime.setTime(sdf.parse(startTimeResult));
+			theEndTime.setTime(sdf.parse(startTimeResult));
 		    
+			//interval is duration
+			//number of intervals 
 		    int interval = Integer.parseInt(props.getProperty("interval"));
 		    if(interval == 1){
-		    		endTime.add(Calendar.MINUTE, 4);
+		    		theEndTime.add(Calendar.MINUTE, 4);
 		    }
 		    else if(interval == 2) {
-		    		endTime.add(Calendar.MINUTE, 8);
+		    		theEndTime.add(Calendar.MINUTE, 8);
 		    }
 		    else if(interval == 3) {
-		    		endTime.add(Calendar.MINUTE, 12);
+		    		theEndTime.add(Calendar.MINUTE, 12);
 		    }
 		    else if(interval == 4) {
-		    		endTime.add(Calendar.MINUTE, 16);
+		    		theEndTime.add(Calendar.MINUTE, 16);
 		    }
 		    else {
 		    		System.out.println("Error in interval length");
 		    }
 		    
 		    fullStartTime=(startDate+"T"+startTimeResult);
-		    String endFormattedTime = sdf.format(endTime.getTime());
+		    String endFormattedTime = sdf.format(theEndTime.getTime());
 		    fullEndTime=(startDate+"T"+endFormattedTime);
 		    
 		    System.out.print("Facility ID: " + facilityID+"\n");
@@ -111,54 +123,6 @@ public class HistoricData {
 			e.printStackTrace();
 		}
 		
-//		Scanner sc = new Scanner(System.in);
-//
-//		System.out.println("Enter a start date in format 'yyyy-MM-dd': ");
-//		date = sc.next();
-//		while(isThisDateValid(date, "yyyy-MM-dd")==false) {
-//			System.out.println("Error in date formatting.");
-//			System.out.println("Enter a date in format 'yyyy-MM-dd': ");
-//			date = sc.next();
-//		}
-//		
-//		System.out.println("Enter a start time in format 'HH:mm:ss': ");
-//		startTime = sc.next();
-//		while(isThisDateValid(startTime, "HH:mm:ss")==false) {
-//			System.out.println("Error in start time formatting.");
-//			System.out.println("Enter a start time in format 'HH:mm:ss': ");
-//			startTime = sc.next();
-//		}
-//		
-//		System.out.println("Enter an end time in format 'HH:mm:ss': ");
-//		endTime = sc.next();
-//		while(isThisDateValid(endTime, "HH:mm:ss")==false) {
-//			System.out.println("Error in end time formatting.");
-//			System.out.println("Enter an end time in format 'HH:mm:ss': ");
-//			endTime = sc.next();
-//		}
-//		
-//		//facilityID= 80
-//		System.out.println("Enter a facility ID: ");
-//		facilityID = sc.next();
-//		
-//		//segmentID=6
-//		System.out.println("Enter a segment ID: ");
-//		segmentID = sc.next();
-//		
-//		//added
-//		while(true){
-//			System.out.println("Enter a sensor ID or enter 'x' to escape: ");
-//			sensorID = sc.next();
-//			if(sensorID.equals("x"))
-//				break;
-//			else
-//				sensorIDList.add(sensorID);
-//		}
-//		
-//		sc.close();
-//		fullStartTime=(date+"T"+startTime);
-//		fullEndTime=(date+"T"+endTime);
-		
 		//converting strings to ints to use in constructors
 		int facilityIDint = Integer.parseInt(facilityID);
 		int segmentIDint = Integer.parseInt(segmentID);
@@ -170,6 +134,8 @@ public class HistoricData {
 		System.out.println("\n"+longSegment);
 		
 		GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
+		System.out.println("----------------Test Set-------------------");
+		
 		Vector<Sensor> testSet = getTestSet();
 		
 		for(int i=0; i<testSet.size(); i++) {
@@ -180,9 +146,86 @@ public class HistoricData {
 			current.setDensity(density);
 		}
 		
-		System.out.println("\n"+longSegment);
-		System.out.println("\n"+testSet);
+		//System.out.println("\n"+longSegment);
+		for (int k = 0; k<testSet.size(); k++) {
+			System.out.println(testSet.elementAt(k).toString());
+		}
+		
+		for (int j = 0; j<longSegment.getSensorsSize(); j++) {
+			String temp = Integer.toString(longSegment.getSensor(j).getSensorID());
+			if(sensorIDList.contains(temp)) {
+				longSegment.getSensor(j).toString();
+			}
+		}
+
+		int sensorCount = 0;
+		
+		System.out.print(sensorIDList.get(0) + "  ");
+		System.out.print(sensorIDList.get(1) + "  ");
+		System.out.println(sensorIDList.get(2) + "  ");
+		
+		for(int t = 0; t<testSet.size(); t++) {
+			try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			
+			Date currentDateTime = testSet.get(t).getEndTime();
+			Calendar currentEndTime = Calendar.getInstance();
+			currentEndTime.setTime(currentDateTime);
+			
+			Calendar startDateTime = Calendar.getInstance();
+			startDateTime.setTime(sdf.parse(fullStartTime));
+			
+			//Calendar startDateTimePlusInterval = Calendar.getInstance();
+			//startDateTimePlusInterval.setTime(sdf.parse(fullStartTime));
+			//startDateTimePlusInterval.add(Calendar.MINUTE, 4);
+			
+			Calendar interval4 = Calendar.getInstance();
+			interval4.setTime(sdf.parse(fullStartTime));
+			interval4.add(Calendar.MINUTE, 4);
+			
+			Calendar interval8 = Calendar.getInstance();
+			interval8.setTime(sdf.parse(fullStartTime));
+			interval8.add(Calendar.MINUTE, 8);
+			
+			Calendar interval12 = Calendar.getInstance();
+			interval12.setTime(sdf.parse(fullStartTime));
+			interval12.add(Calendar.MINUTE, 12);
+			
+			Calendar interval16 = Calendar.getInstance();
+			interval16.setTime(sdf.parse(fullStartTime));
+			interval16.add(Calendar.MINUTE, 16);
+			
+			int currentSensorID = testSet.get(t).getSensorID();
+			//System.out.println("current" + currentSensorID);
+			int sensorIDFromList = Integer.parseInt(sensorIDList.get(sensorCount));
+			
+			double currentFlow = testSet.get(t).getFlow();
+			
+			if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval4) || currentEndTime.equals(interval4) && currentSensorID == sensorIDFromList) {
+				System.out.print("f:" + currentFlow);
+			}
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval8) || currentEndTime.equals(interval8) && currentSensorID == sensorIDFromList) {
+				System.out.println(currentSensorID);
+				System.out.print("f:" + currentFlow);
+			}
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval12) || currentEndTime.equals(interval12) && currentSensorID == sensorIDFromList) {
+				System.out.println(currentSensorID);
+				System.out.print("f:" + currentFlow);
+			}
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval16) || currentEndTime.equals(interval16) && currentSensorID == sensorIDFromList) {
+				System.out.println(currentSensorID);
+				System.out.print("f:" + currentFlow);
+			}
+			//int nextSensorID = currentSensorID + 1;
+			//interval--;
+			//sensorCount++;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			    }	
+		}
 	}
+	
 	
 	public static Vector<Sensor> getTestSet() {
 		Sensor sensor;
@@ -223,7 +266,8 @@ public class HistoricData {
 		}
 		return true;
 	}
-
+	
+	//need to adjust this to account for specific sensors
 	public static void GetHistoricSensorData(String facilityID, String segmentID, String fullStartTime, String fullEndTime)
     {
         try {
@@ -257,7 +301,6 @@ public class HistoricData {
             segmentElement.addTextNode(segmentID);
             startTimeElement.addTextNode(fullStartTime);
             endTimeElement.addTextNode(fullEndTime);
-
 
             MimeHeaders headers = soapMessage.getMimeHeaders();
             headers.addHeader("SOAPAction", soapAction);
@@ -307,7 +350,7 @@ public class HistoricData {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			NodeList nList = doc.getElementsByTagName("LaneIntervalData");
 			System.out.println("----------------------------");
 	
@@ -381,5 +424,7 @@ public class HistoricData {
 			e.printStackTrace();
 		    }	
 	}
+
+
 	
 }
