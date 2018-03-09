@@ -281,7 +281,6 @@ public class HistoricData {
 		//System.out.println("T4 |" + T4.get(0) + "|" + T4.get(1) + "|" + T4.get(2));
 	}//end Hash Map code
 	
-	
 	public static Vector<Sensor> getTestSet() {
 		Sensor sensor;
 		Vector<Sensor> testSet= new Vector<Sensor>();
