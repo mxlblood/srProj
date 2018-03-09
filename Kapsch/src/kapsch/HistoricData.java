@@ -158,17 +158,36 @@ public class HistoricData {
 			}
 		}
 
-		int sensorCount = 0;
+		int sensorCount = testSet.size();
+		System.out.println("sensorCount: " + sensorCount);
+		int sensorIDListCount = sensorIDList.size();
+		System.out.println("sensorIDListCount: " + sensorIDListCount);
 		
 		System.out.print(sensorIDList.get(0) + "  ");
 		System.out.print(sensorIDList.get(1) + "  ");
 		System.out.println(sensorIDList.get(2) + "  ");
 		
-		for(int t = 0; t<testSet.size(); t++) {
+		ArrayList<Double> T1 = new ArrayList<Double>();
+		T1.add(0.0);
+		T1.add(0.0);
+		T1.add(0.0);
+		ArrayList<Double> T2 = new ArrayList<Double>();
+		T2.add(0.0);
+		T2.add(0.0);
+		T2.add(0.0);
+		ArrayList<Double> T3 = new ArrayList<Double>();
+		T3.add(0.0);
+		T3.add(0.0);
+		T3.add(0.0);
+		ArrayList<Double> T4 = new ArrayList<Double>();
+		T4.add(0.0);
+		T4.add(0.0);
+		T4.add(0.0);
+		while(sensorCount!=0) {
 			try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			
-			Date currentDateTime = testSet.get(t).getEndTime();
+			Date currentDateTime = testSet.get(sensorCount-1).getEndTime();
 			Calendar currentEndTime = Calendar.getInstance();
 			currentEndTime.setTime(currentDateTime);
 			
@@ -195,26 +214,67 @@ public class HistoricData {
 			interval16.setTime(sdf.parse(fullStartTime));
 			interval16.add(Calendar.MINUTE, 16);
 			
-			int currentSensorID = testSet.get(t).getSensorID();
+			int currentSensorID = testSet.get(sensorCount-1).getSensorID();
 			//System.out.println("current" + currentSensorID);
-			int sensorIDFromList = Integer.parseInt(sensorIDList.get(sensorCount));
+			int sensorIDFromList = Integer.parseInt(sensorIDList.get(sensorIDListCount-sensorIDListCount));
 			
-			double currentFlow = testSet.get(t).getFlow();
+			double currentFlow = testSet.get(sensorCount-1).getFlow();
 			
-			if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval4) || currentEndTime.equals(interval4) && currentSensorID == sensorIDFromList) {
-				System.out.print("f:" + currentFlow);
+			if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval4) || currentEndTime.equals(interval4)) {
+				if(currentSensorID == sensorIDFromList){
+					T1.set(0, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+1){
+					T1.set(1, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+2){
+					T1.set(2, currentFlow);
+					sensorCount--;
+				}
 			}
-			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval8) || currentEndTime.equals(interval8) && currentSensorID == sensorIDFromList) {
-				System.out.println(currentSensorID);
-				System.out.print("f:" + currentFlow);
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval8) || currentEndTime.equals(interval8)) {
+				if(currentSensorID == sensorIDFromList){
+					T2.set(0, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+1){
+					T2.set(1, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+2){
+					T2.set(2, currentFlow);
+					sensorCount--;
+				}
 			}
-			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval12) || currentEndTime.equals(interval12) && currentSensorID == sensorIDFromList) {
-				System.out.println(currentSensorID);
-				System.out.print("f:" + currentFlow);
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval12) || currentEndTime.equals(interval12)) {
+				if(currentSensorID == sensorIDFromList){
+					T3.set(0, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+1){
+					T3.set(1, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+2){
+					T3.set(2, currentFlow);
+					sensorCount--;
+				}
 			}
-			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval16) || currentEndTime.equals(interval16) && currentSensorID == sensorIDFromList) {
-				System.out.println(currentSensorID);
-				System.out.print("f:" + currentFlow);
+			else if(currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) && currentEndTime.before(interval16) || currentEndTime.equals(interval16)) {
+				if(currentSensorID == sensorIDFromList){
+					T4.set(0, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+1){
+					T4.set(1, currentFlow);
+					sensorCount--;
+				}
+				else if(currentSensorID == sensorIDFromList+2){
+					T4.set(2, currentFlow);
+					sensorCount--;
+				}
 			}
 			//int nextSensorID = currentSensorID + 1;
 			//interval--;
@@ -224,6 +284,12 @@ public class HistoricData {
 				e.printStackTrace();
 			    }	
 		}
+		System.out.println(T1);
+		System.out.println(T2);
+		System.out.println(T3);
+		System.out.println(T4);
+		System.out.println(sensorIDList.get(sensorIDListCount-sensorIDListCount) + "  | " +  sensorIDList.get(sensorIDListCount-(sensorIDListCount-1)) + " |  " + sensorIDList.get(sensorIDListCount-(sensorIDListCount-2)));
+		System.out.println(T1.get(0) + "|" + T1.get(1) + "|" + T1.get(2));
 	}
 	
 	
