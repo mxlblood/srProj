@@ -41,7 +41,6 @@ public class HistoricData {
 	private static String facilityDescription;
 	private static String segmentID;
 	private static String segmentDescription;
-	
 	private static int interval;
 	
 	//added
@@ -86,7 +85,7 @@ public class HistoricData {
 		    
 			//interval is duration
 			//number of intervals 
-		    int interval = Integer.parseInt(props.getProperty("interval"));
+		    interval = Integer.parseInt(props.getProperty("interval"));
 		    if(interval == 1){
 		    		theEndTime.add(Calendar.MINUTE, 4);
 		    }
@@ -273,13 +272,68 @@ public class HistoricData {
 			catch (Exception e) {
 				e.printStackTrace();
 			    }	
-		}
+		}//end Hash Map code
 		System.out.println("___| " + sensorIDList.get(sensorIDListCount-sensorIDListCount) + " | " +  sensorIDList.get(sensorIDListCount-(sensorIDListCount-1)) + " | " + sensorIDList.get(sensorIDListCount-(sensorIDListCount-2)));
 		System.out.println("T1 |" + T1.get(0) + "|" + T1.get(1) + "|" + T1.get(2));
 		System.out.println("T2 |     |" + T2.get(1) + "|" + T2.get(2));
 		System.out.println("T3 |     |     |" + T3.get(2));
 		//System.out.println("T4 |" + T4.get(0) + "|" + T4.get(1) + "|" + T4.get(2));
-	}//end Hash Map code
+		
+		ArrayList<Double> T1normal = normalizeData(T1);
+		ArrayList<Double> T2normal = normalizeData(T2);
+		ArrayList<Double> T3normal = normalizeData(T3);
+		ArrayList<Double> T4normal = normalizeData(T4);
+		System.out.println(T1normal);
+		
+		BufferedWriter bw = null;
+		FileWriter fw = null;
+		try {
+			File file = new File("normalizedData.txt");
+			// true = append file
+			fw = new FileWriter(file, true);
+			bw = new BufferedWriter(fw);
+			bw.write(Double.toString(T1normal.get(0)));
+		    bw.write(",");
+		    bw.write(Double.toString(T1normal.get(1)));
+		    bw.write(",");
+		    bw.write(Double.toString(T1normal.get(2)));
+		    bw.write(",");
+		    bw.write(Double.toString(T2normal.get(1)));
+		    bw.write(",");
+		    bw.write(Double.toString(T2normal.get(2)));
+		    bw.write(",");
+		    bw.write(Double.toString(T3normal.get(2)));
+		    bw.write(",");
+		    bw.write(Double.toString(T4normal.get(2)));//output
+		    bw.write("\n");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bw != null)
+					bw.close();
+				if (fw != null)
+					fw.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	public static ArrayList<Double> normalizeData(ArrayList<Double> list) {
+		double normalized;
+		double min = 0;
+		double max = 1600;
+		double x;
+		ArrayList<Double> normalizedArray = new ArrayList<Double>();
+		for (int i=0; i<list.size(); i++) {
+			x = list.get(i);
+			normalized = (x-min)/(max-min);
+			normalizedArray.add(normalized);
+		}
+		return normalizedArray;
+	}
 	
 	public static Vector<Sensor> getTestSet() {
 		Sensor sensor;
