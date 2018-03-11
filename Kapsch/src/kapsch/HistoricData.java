@@ -130,12 +130,35 @@ public class HistoricData {
 		longSegment = new Segment(segmentIDint, segmentDescription);
 		north.addSegment(longSegment);
 		
-		System.out.println("\n"+longSegment);
+		//System.out.println("\n"+longSegment);
 		
-		GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
-		System.out.println("----------------Test Set-------------------");
 		
-		Vector<Sensor> testSet = getTestSet();
+		for(int testSetCounter = 0; testSetCounter<100; testSetCounter++) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			Calendar startTimeIncrement = Calendar.getInstance();
+			Calendar endTimeIncrement = Calendar.getInstance();
+			try {
+				startTimeIncrement.setTime(sdf.parse(fullStartTime));
+				endTimeIncrement.setTime(sdf.parse(fullEndTime));
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			if(testSetCounter!=0) {
+				startTimeIncrement.add(Calendar.MINUTE, 20);
+				endTimeIncrement.add(Calendar.MINUTE, 20);
+				}
+			Date startDate = startTimeIncrement.getTime();
+			fullStartTime = sdf.format(startDate);
+			Date endDate = endTimeIncrement.getTime();
+			fullEndTime = sdf.format(endDate);
+			System.out.println(fullStartTime);
+			System.out.println(fullEndTime);
+			GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
+			System.out.println("----------------Test Set-------------------");
+			Vector<Sensor> testSet = getTestSet();
+			System.out.println("Finished getting test set");
+		
 		
 		for(int i=0; i<testSet.size(); i++) {
 			Sensor current = testSet.get(i);
@@ -146,9 +169,9 @@ public class HistoricData {
 		}
 		
 		//System.out.println("\n"+longSegment);
-		for (int k = 0; k<testSet.size(); k++) {
-			System.out.println(testSet.elementAt(k).toString());
-		}
+//		for (int k = 0; k<testSet.size(); k++) {
+//			System.out.println(testSet.elementAt(k).toString());
+//		}
 		
 		for (int j = 0; j<longSegment.getSensorsSize(); j++) {
 			String temp = Integer.toString(longSegment.getSensor(j).getSensorID());
@@ -176,9 +199,11 @@ public class HistoricData {
 		T4.add(0.0);
 		T4.add(0.0);
 		T4.add(0.0);
-		while(sensorCount!=0) {
+		
+		while(sensorCount>0) {
+			System.out.println(sensorCount);
 			try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			
 			//change back to getEndTime()
 			Date currentDateTime = testSet.get(sensorCount-1).getStartTime();
@@ -211,6 +236,11 @@ public class HistoricData {
 			int currentSensorID = testSet.get(sensorCount-1).getSensorID();
 			int sensorIDFromList = Integer.parseInt(sensorIDList.get(sensorIDListCount-sensorIDListCount));
 			double currentFlow = testSet.get(sensorCount-1).getFlow();
+			
+
+			System.out.println(startDateTime.getTime());
+			System.out.println(currentEndTime.getTime());
+			System.out.println(interval4.getTime());
 			
 			if(currentEndTime.before(interval4) && currentEndTime.after(startDateTime) || currentEndTime.equals(startDateTime) ) {
 				if(currentSensorID == sensorIDFromList){
@@ -268,6 +298,10 @@ public class HistoricData {
 					sensorCount--;
 				}
 			}
+			else {
+				sensorCount--;
+				//System.exit(0);
+			}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -285,6 +319,9 @@ public class HistoricData {
 		ArrayList<Double> T4normal = normalizeData(T4);
 		System.out.println(T1normal);
 		
+		
+		// if conditions
+		System.out.println("writing to file");
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		try {
@@ -318,6 +355,7 @@ public class HistoricData {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
+		}
 		}
 	}
 	
