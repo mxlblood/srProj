@@ -133,7 +133,7 @@ public class HistoricData {
 		//System.out.println("\n"+longSegment);
 		
 		
-		for(int testSetCounter = 0; testSetCounter<100; testSetCounter++) {
+		for(int testSetCounter = 0; testSetCounter<1000; testSetCounter++) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			Calendar startTimeIncrement = Calendar.getInstance();
 			Calendar endTimeIncrement = Calendar.getInstance();
@@ -362,7 +362,7 @@ public class HistoricData {
 	public static ArrayList<Double> normalizeData(ArrayList<Double> list) {
 		double normalized;
 		double min = 0;
-		double max = 1600;
+		double max = 3200;
 		double x;
 		ArrayList<Double> normalizedArray = new ArrayList<Double>();
 		for (int i=0; i<list.size(); i++) {
