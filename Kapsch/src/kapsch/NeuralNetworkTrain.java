@@ -13,7 +13,7 @@ import org.neuroph.util.TrainingSetImport;
 import org.neuroph.util.TransferFunctionType;
 import org.neuroph.core.learning.SupervisedLearning;
 
-public class NeuralNetworkTest {
+public class NeuralNetworkTrain {
 
     public static void main(String[] args) {
         //configurable layers
