@@ -51,13 +51,16 @@ public class NeuralNetworkTrain {
         System.out.println("Training neural network...");
         neuralNet.learn(trainingSet);
         System.out.println("Done!");
+        
+        // save the trained network into file
+        neuralNet.save("mpKapschNet.nnet");
 
         // test perceptron
         System.out.println("Testing trained neural network");
         testPrediction(neuralNet, trainingSet);
 
-        //Outputs with error
-        testOutputs(neuralNet, trainingSet);
+        //Outputs results with error
+        testResultsOutputs(neuralNet, trainingSet);
         System.out.println("Total Network Error: " + learningRule.getTotalNetworkError());
        
     }
@@ -70,10 +73,29 @@ public class NeuralNetworkTrain {
             System.out.print("Input: " + Arrays.toString(trainingElement.getInput()));
             System.out.println(" Output: " + Arrays.toString(networkOutput));
         }
-
     }
     
-    public static void testOutputs(NeuralNetwork nnet, DataSet dset) {
+    public static void testSinglePrediction(NeuralNetwork nnet, DataSet dset) {
+        for (DataSetRow trainingElement : dset.getRows()) {
+            nnet.setInput(trainingElement.getInput());
+            nnet.calculate();
+            double[] networkOutput = nnet.getOutput();
+            double[] desiredOutput = trainingElement.getDesiredOutput();
+            System.out.print("Input: " + Arrays.toString(trainingElement.getInput()));
+            System.out.println(" Predicted Output: " + Arrays.toString(networkOutput));
+            System.out.print("Actual Output: " + Arrays.toString(desiredOutput));
+        }
+    }
+        
+	public static void testSingleInput(NeuralNetwork nnet, double[] array) {
+        nnet.setInput(array);
+        nnet.calculate();
+        double[] networkOutput = nnet.getOutput();
+        System.out.print("Input: " + Arrays.toString(array));
+        System.out.println(" Output: " + Arrays.toString(networkOutput));
+        }
+    
+    public static void testResultsOutputs(NeuralNetwork nnet, DataSet dset) {
         for (DataSetRow trainingElement : dset.getRows()) {
             nnet.setInput(trainingElement.getInput());
             nnet.calculate();
@@ -81,7 +103,7 @@ public class NeuralNetworkTrain {
             double[] desiredOutput = trainingElement.getDesiredOutput();
             System.out.print("Actual Output: " + Arrays.toString(desiredOutput));
             System.out.print(" Predicted Output: " + Arrays.toString(networkOutput));
-            double error = desiredOutput[0] - networkOutput[0];
+            double error = networkOutput[0] - desiredOutput[0] ;
             System.out.println(" Error: " + error);
             
             //calculateOutputError(desiredOutput, networkOutput);
