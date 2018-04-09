@@ -835,10 +835,10 @@ public class TestNeuralNetworkTest {
 		//System.out.println("predicted speed2:" + nnetSpeedList.get(1));
 		//System.out.println("predicted speed3:" + nnetSpeedList.get(0));
 		
-		double actualTime = ( calculateTime(T4.get(0)) + calculateTime(T4.get(1)) + calculateTime(T4.get(2)) );
-		double estimatedTime = ( calculateTime(nnetSpeedList.get(0)) + calculateTime(nnetSpeedList.get(1)) + calculateTime(nnetSpeedList.get(2)) );
-		System.out.println("Actual Time: " + actualTime);
-		System.out.println("Estimated Time: " + estimatedTime);
+		double actualTime = ( (calculateTime(T4.get(0)) + calculateTime(T4.get(1)) + calculateTime(T4.get(2)))*60 );
+		double estimatedTime = ( (calculateTime(nnetSpeedList.get(0)) + calculateTime(nnetSpeedList.get(1)) + calculateTime(nnetSpeedList.get(2)))*60 );
+		System.out.println("Estimated Time: " + estimatedTime + " minutes.");
+		System.out.println("Actual Time: " + actualTime + " minutes.");
 		
 	}//end main
 	
