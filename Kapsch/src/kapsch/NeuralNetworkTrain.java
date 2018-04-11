@@ -16,6 +16,8 @@ import org.neuroph.core.learning.SupervisedLearning;
 
 public class NeuralNetworkTrain {
 
+	private static double error;
+	
     public static void main(String[] args) {
         //configurable layers
         int inputNeurons = 11; 
@@ -43,10 +45,10 @@ public class NeuralNetworkTrain {
         System.out.println("Creating neural network");
         MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, inputNeurons, hiddenNeurons, outputNeurons);
 
-        // set learning parameters
+        // set learning parameters ********
         MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
-        learningRule.setLearningRate(0.2);
-        learningRule.setMomentum(0.7);
+        learningRule.setLearningRate(0.8);
+        learningRule.setMomentum(0.1);
 
         // learn the training set
         System.out.println("Training neural network...");
@@ -88,10 +90,15 @@ public class NeuralNetworkTrain {
             nnet.calculate();
             double[] networkOutput = nnet.getOutput();
             double[] desiredOutput = trainingElement.getDesiredOutput();
-            System.out.println("Input: " + Arrays.toString(trainingElement.getInput()));
-            System.out.println("Predicted Output: " + Arrays.toString(networkOutput));
+            //System.out.println("Input: " + Arrays.toString(trainingElement.getInput()));
+            //System.out.println("Predicted Output: " + Arrays.toString(networkOutput));
             //System.out.println("Predicted Output: " + networkOutput[0]);
-            System.out.println("Actual Output: " + Arrays.toString(desiredOutput));
+            //System.out.println("Actual Output: " + Arrays.toString(desiredOutput));
+            //double predicted = networkOutput[0];
+            //double desired = desiredOutput[0];
+            //double error = predicted-desired;
+            //System.out.println("Error: " + error);
+            //System.out.println("Total Network Error: " + (networkOutput[0]) - desiredOutput[0] );
             double min = 0; 
             double speed = ((networkOutput[0]*(max-min)) + min);
             nnetSpeedList.add(speed);

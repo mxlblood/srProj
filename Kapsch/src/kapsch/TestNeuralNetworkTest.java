@@ -15,6 +15,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.io.*;
@@ -44,24 +45,27 @@ public class TestNeuralNetworkTest {
 
 	public static void main(String[] args) {
 		
-		System.out.println("---------------Highway-----------------");
-		System.out.println("---121---122---123---124---125---126---\n\n");
-		System.out.println("---------------Highway-----------------");
+		System.out.println("               Sensors                ");
+		System.out.println("   120   121   122   123   124   125  ");
+		System.out.println("--------------------------------------");
+		System.out.println("               Lane 1                 ");
+		System.out.println("  ---   ---   ---   ---   ---    ---  ");
+		System.out.println("               Lane 2                 ");
+		System.out.println("  ---   ---   ---   ---   ---    ---  ");
+		System.out.println("               Lane 3                  ");
+		System.out.println("---------------Highway----------------");
 		
 		Scanner sc = new Scanner(System.in);
 
 		int idCounter = 0;
 		while(idCounter<3){
-			System.out.println("Enter sensor ID to create segment of highway for predictions or enter 'x' to escape: ");
+			System.out.println("\nEnter sensor ID to create segment of highway for predictions: ");
 			String sensorInputID = sc.next();
-			if(sensorInputID.equals("x"))
-				break;
-			else
-				sensorIDList.add(sensorInputID);
-				idCounter++;	
+			sensorIDList.add(sensorInputID);
+			idCounter++;	
 		}
 		
-		System.out.println("Enter a start date in format 'yyyy-MM-dd': ");
+		System.out.println("\nEnter a start date in format 'yyyy-MM-dd': ");
 		String startDateInput = sc.next();
 		while(HistoricData.isThisDateValid(startDateInput, "yyyy-MM-dd")==false) {
 			System.out.println("Error in date formatting.");
@@ -69,7 +73,7 @@ public class TestNeuralNetworkTest {
 			startDateInput = sc.next();
 		}
 		
-		System.out.println("Enter a start time in format 'HH:mm:ss': ");
+		System.out.println("\nEnter a start time in format 'HH:mm:ss': ");
 		String startTimeResult = sc.next();
 		while(HistoricData.isThisDateValid(startTimeResult, "HH:mm:ss")==false) {
 			System.out.println("Error in start time formatting.");
@@ -78,7 +82,7 @@ public class TestNeuralNetworkTest {
 		}
 		
 		do {
-			System.out.println("Enter how many minutes in the future you would like to predict:\nEnter 4, 8 or 12 minutes.");
+			System.out.println("\nEnter how many minutes in the future you would like to predict:\nEnter 4, 8 or 12 minutes.");
             while (!sc.hasNextInt()) {
                 String input = sc.next();
                 System.out.println("Please enter '4', '8' or '12'");
@@ -109,6 +113,7 @@ public class TestNeuralNetworkTest {
 		    String endFormattedTime = sdf.format(theEndTime.getTime());
 		    fullEndTime=(startDateInput+"T"+endFormattedTime);
 		    
+		    System.out.println("\n---------Retrieved From User---------");
 		    System.out.print("Facility ID: " + facilityID+"\n");
 		    System.out.print("Segment ID: " + segmentID+"\n");
 		    System.out.print("Sensors: " + sensorIDList+"\n");
@@ -147,12 +152,12 @@ public class TestNeuralNetworkTest {
 		fullStartTime = sdf.format(startDate);
 		Date endDate = endTimeIncrement.getTime();
 		fullEndTime = sdf.format(endDate);
-		System.out.println(fullStartTime);
-		System.out.println(fullEndTime);
+		//System.out.println(fullStartTime);
+		//System.out.println(fullEndTime);
 		GetHistoricSensorData(facilityID, segmentID, fullStartTime, fullEndTime);
-		System.out.println("----------------Test Set-------------------");
+		//System.out.println("----------------Test Set-------------------");
 		Vector<Sensor> testSet = getTestSet();
-		System.out.println("Finished getting test set");
+		//System.out.println("Finished getting test set");
 		
 		for(int i=0; i<testSet.size(); i++) {
 			Sensor current = testSet.get(i);
@@ -397,14 +402,14 @@ public class TestNeuralNetworkTest {
 				e.printStackTrace();
 			    }	
 		}//end Hash Map code
-		System.out.println("___|" + sensorIDList.get(sensorIDListCount-sensorIDListCount) + " | " +  sensorIDList.get(sensorIDListCount-(sensorIDListCount-1)) + " | " + sensorIDList.get(sensorIDListCount-(sensorIDListCount-2)));
-		System.out.println("T1 |" + T1.get(0) + "|" + T1.get(1) + "|" + T1.get(2));
-		System.out.println("T2 |" + T2.get(0) + "|" + T2.get(1) + "|" + T2.get(2));
-		System.out.println("T3 |" + T3.get(0) + "|" + T3.get(1) + "|" + T3.get(2));
-		System.out.println("T4 |" + T4.get(0) + "|" + T4.get(1) + "|" + T4.get(2));
-		System.out.println("T5 |" + T5.get(0) + "|" + T5.get(1) + "|" + T5.get(2));
-		System.out.println("T6 |" + T6.get(0) + "|" + T6.get(1) + "|" + T6.get(2));
-		System.out.println("T7 |" + T7.get(0) + "|" + T7.get(1) + "|" + T7.get(2));
+		//System.out.println("___|" + sensorIDList.get(sensorIDListCount-sensorIDListCount) + " | " +  sensorIDList.get(sensorIDListCount-(sensorIDListCount-1)) + " | " + sensorIDList.get(sensorIDListCount-(sensorIDListCount-2)));
+		//System.out.println("T1 |" + T1.get(0) + "|" + T1.get(1) + "|" + T1.get(2));
+		//System.out.println("T2 |" + T2.get(0) + "|" + T2.get(1) + "|" + T2.get(2));
+		//System.out.println("T3 |" + T3.get(0) + "|" + T3.get(1) + "|" + T3.get(2));
+		//System.out.println("T4 |" + T4.get(0) + "|" + T4.get(1) + "|" + T4.get(2));
+		//System.out.println("T5 |" + T5.get(0) + "|" + T5.get(1) + "|" + T5.get(2));
+		//System.out.println("T6 |" + T6.get(0) + "|" + T6.get(1) + "|" + T6.get(2));
+		//System.out.println("T7 |" + T7.get(0) + "|" + T7.get(1) + "|" + T7.get(2) + "\n");
 		
 		ArrayList<Double> T1normal = normalizeData(T1);
 		ArrayList<Double> T2normal = normalizeData(T2);
@@ -415,13 +420,9 @@ public class TestNeuralNetworkTest {
 		ArrayList<Double> T7normal = normalizeData(T7);
 
 		double max = maxIndex(speedList);
-		double predictedSpeedS1 = 0;
-		double predictedSpeedS2 = 0;
-		double predictedSpeedS3 = 0;
 		ArrayList<Double> nnetSpeedList = new ArrayList<Double>();
-		int neuralCounter = 0;
 		if(interval == 4) {
-			System.out.println("writing to file");
+			System.out.println("\nloading...\n");
 			BufferedWriter bw = null;
 			FileWriter fw = null;
 			try {
@@ -557,7 +558,7 @@ public class TestNeuralNetworkTest {
 		}
 		else if (interval == 8) {
 			//change
-			System.out.println("writing to file");
+			System.out.println("\nloading...\n");
 			BufferedWriter bw = null;
 			FileWriter fw = null;
 			try {
@@ -690,7 +691,7 @@ public class TestNeuralNetworkTest {
 		}
 		else if (interval == 12) {
 			//change
-			System.out.println("writing to file");
+			System.out.println("\nloading...\n");
 			BufferedWriter bw = null;
 			FileWriter fw = null;
 			try {
@@ -837,8 +838,16 @@ public class TestNeuralNetworkTest {
 		
 		double actualTime = ( (calculateTime(T4.get(0)) + calculateTime(T4.get(1)) + calculateTime(T4.get(2)))*60 );
 		double estimatedTime = ( (calculateTime(nnetSpeedList.get(0)) + calculateTime(nnetSpeedList.get(1)) + calculateTime(nnetSpeedList.get(2)))*60 );
-		System.out.println("Estimated Time: " + estimatedTime + " minutes.");
+		double accuracy = (actualTime/estimatedTime)*100;
+		DecimalFormat numberFormat = new DecimalFormat("#.000");
+		double predictedSpeed = nnetSpeedList.get(0);
+		double actualSpeed = T4.get(2);
+		System.out.println("Predicted Speed: " + numberFormat.format(predictedSpeed) + " mph");
+		System.out.println("Actual Speed: " + numberFormat.format(actualSpeed) + " mph");
+		System.out.println("Predicted Time: " + estimatedTime + " minutes.");
 		System.out.println("Actual Time: " + actualTime + " minutes.");
+		System.out.println("Accuracy: " + numberFormat.format(accuracy) + "%");
+		//System.out.println("Accuracy: " + accuracy + "%");
 		
 	}//end main
 	
@@ -979,7 +988,7 @@ public class TestNeuralNetworkTest {
 			doc.getDocumentElement().normalize();
 			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			NodeList nList = doc.getElementsByTagName("LaneIntervalData");
-			System.out.println("----------------------------");
+			//System.out.println("----------------------------");
 	
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 
